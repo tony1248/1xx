@@ -16,4 +16,4 @@ inside out project version 101.0
 	- added first level of navigation
 	- created assest/js/app.js
 	- created assets/data/menu.json
-	- moved header resize js to app.js 
+	- moved header resize js to app.js
