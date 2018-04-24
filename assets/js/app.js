@@ -1,6 +1,6 @@
 // JavaScript Document
 
-window.onload = init()
+window.onload = init();
 
 function init() {
 	window.addEventListener('scroll', function (e) {
@@ -33,12 +33,33 @@ function init() {
 			console.log('all is not good');
 		}
 	});
+	
+	$.ajax({
+		method: 'GET',
+		url: 'https://me.esposito1540.com/wp-json/wp-api-menus/v2/menus/3',
+		dataType: 'json',
+		success: function (data) {
+			var menu = menuBuilder(data.items, 'genLinks', 'footer-ul');
+			$('#genLinks').replaceWith(menu);
+			$('#genLinks li a').click(function () {
+				getPage($(this).data("pgid"));
+			});
+		},
+		error: function () {
+			console.log('all is not good');
+		}
+	});
+	
+	getPosts();
 }
 
-function menuBuilder(obj) {
+function menuBuilder(obj, targetE1, classInfo) {
 	var theMenu = '';
 	if (obj.length > 0) {
-		theMenu = theMenu + '<ul>';
+		let target = (targetE1)?' id="'+targetE1+'"':'';
+		let elClass = (classInfo)?' class="'+classInfo+'"':'';
+		theMenu = theMenu + '<ul' +target+''+elClass+'>';
+		console.log(theMenu+' '+target);
 		obj.forEach(function (item) {
 			theMenu = theMenu + '<li><a href="#" data-pgid="' + item.object_id + '">' + item.title + '</a>';
 			if (item.children) {
@@ -52,6 +73,7 @@ function menuBuilder(obj) {
 	}
 	return theMenu;
 }
+
 
 function getPage(obj) {
 	$("#loaderDiv").fadeIn("slow");
@@ -72,6 +94,34 @@ function getPage(obj) {
 				$(this).html(pgbuild).fadeIn();
 				$("#loaderDiv").fadeOut("slow");
 			});
+		},
+		error: function () {
+			console.log('bad');
+		}
+	});
+}
+
+
+
+
+
+
+
+function getPosts() {
+	
+	$.ajax({
+		method: 'GET',
+		url: 'https://me.esposito1540.com/wp-json/wp/v2/posts?orderby=date&order=asc&per_page=5', 
+		dataType: 'json',
+		success: function (data) {
+			$("#latestPosts").html('<p id="postLdr"><i class="fa fa=cogs"></i>Loading Posts</p>');
+			data.forEach(function (item) {
+				
+				var myDate = new Date(item.date);
+				
+				$("#latestPosts").prepend('<p>' + item.title.rendered + '<span>' + myDate.getMonth() + '-' + myDate.getDay() + '-' + myDate.getFullYear() + '</span></p>');
+			});
+			$("#postLdr").remove();
 		},
 		error: function () {
 			console.log('bad');
