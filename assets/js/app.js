@@ -45,7 +45,7 @@ function init() {
 				getPage($(this).data("pgid"));
 			});
 		},
-		error: function () {
+		error: function () { 
 			console.log('all is not good');
 		}
 	});
